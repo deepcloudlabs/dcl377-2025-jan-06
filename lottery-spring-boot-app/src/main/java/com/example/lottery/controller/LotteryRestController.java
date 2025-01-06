@@ -3,6 +3,7 @@ package com.example.lottery.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class LotteryRestController {
 	}
 
 	@GetMapping(params = { "column" })
+	//@Cacheable(cacheNames = "numbers")
 	public List<List<Integer>> getNumbers(@Validated @Min(5) @RequestParam int column) {
 		return lotteryService.draw(lotteryMax, lotterySize, column);
 	}

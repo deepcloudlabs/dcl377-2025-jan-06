@@ -14,7 +14,6 @@ public class StandardRandomService implements RandomService {
 
 	@Override
 	public int generate(int min, int max) {
-		System.err.println("StandardRandomService::generate");
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}
 
