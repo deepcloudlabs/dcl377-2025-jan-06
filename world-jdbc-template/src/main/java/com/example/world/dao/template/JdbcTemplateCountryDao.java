@@ -58,7 +58,7 @@ public class JdbcTemplateCountryDao implements CountryDao {
 		System.err.println(String.format("%d rows affected.", rowsAffected));
 		return country;
 	}
-    @Transactional(isolation=Isolation.READ_COMMITTED,propagation = Propagation.MANDATORY)
+    @Transactional(isolation=Isolation.READ_COMMITTED,propagation = Propagation.NEVER)
 	public Country update(Country country) {
 		String code = country.getCode();
 		Optional<Country> existing = findOne(code);
