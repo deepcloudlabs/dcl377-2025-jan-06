@@ -34,7 +34,7 @@ public class CountryRestController {
 	// http://localhost:8001/world/api/v1/countries?continent=Asia
 	// http://localhost:8001/world/api/v1/countries
 	@GetMapping("countries")
-	public Collection<Country> getAllCountries(@RequestParam(name = "continent", required = false) String continent) {
+	public Collection<Country> getAllCountries(@RequestParam(required = false) String continent) {
 		if (Objects.isNull(continent))
 			return countryRepository.findAll();
 		return countryRepository.findByContinent(continent);
@@ -42,7 +42,7 @@ public class CountryRestController {
 
 	// http://localhost:8001/world/api/v1/countries/TUR
 	@GetMapping("countries/{code}")
-	public Country getCountryByCode(@PathVariable("code") String code) {
+	public Country getCountryByCode(@PathVariable String code) {
 		Optional<Country> country = countryRepository.findById(code);
 		if (country.isPresent())
 			return country.get();
@@ -68,7 +68,7 @@ public class CountryRestController {
 	}
 
 	@DeleteMapping("countries/{code}")
-	public Country removeCountryByCode(@PathVariable("code") String code) {
+	public Country removeCountryByCode(@PathVariable String code) {
 		return worldService.removeCountry(code);
 	}
 }

@@ -1,7 +1,7 @@
 package com.example.world.entity.converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class BooleanCharacterConverter implements AttributeConverter<Boolean, String> {

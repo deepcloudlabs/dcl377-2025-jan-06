@@ -2,8 +2,6 @@ package com.example.world.repository;
 
 import java.util.List;
 
-import javax.persistence.LockModeType;
-
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,10 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.world.entity.Country;
 
+import jakarta.persistence.LockModeType;
+
 public interface CountryRepository extends JpaRepository<Country, String> {
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	List<Country> findByContinent(String continent);
-
+    
 	@Query(nativeQuery = true, value = "select distinct continent from country")
 	List<String> getAllContinents();
 	

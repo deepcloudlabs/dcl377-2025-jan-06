@@ -8,7 +8,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @ComponentScan({
 	"com.example.service", "com.example.aop"
 })	
-//@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy
 public class AppConfig {
 
 }

@@ -1,15 +1,14 @@
 package com.example.world.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * 
  * @author Binnur Kurt (binnur.kurt@gmail.com)
  *
  */
-public class TcKimlikNoValidator implements
-		ConstraintValidator<TcKimlikNo, String> {
+public class TcKimlikNoValidator implements ConstraintValidator<TcKimlikNo, String> {
 
 	@Override
 	public void initialize(TcKimlikNo arg0) {

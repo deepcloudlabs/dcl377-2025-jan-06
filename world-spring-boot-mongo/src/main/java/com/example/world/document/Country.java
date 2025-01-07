@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "countries1")
 public class Country {
@@ -16,9 +18,11 @@ public class Country {
 	private Double gnp;
 	private String governmentForm;
 	private String headOfState;
-	private Integer indepYear;
+	@Field("indepYear")
+	private Integer independenceYear;
 	private Double lifeExpectancy;
 	private String localName;
+	@Indexed
 	private String name;
 	private Integer population;
 	private String region;
@@ -84,11 +88,11 @@ public class Country {
 	}
 
 	public Integer getIndepYear() {
-		return indepYear;
+		return independenceYear;
 	}
 
 	public void setIndepYear(Integer indepYear) {
-		this.indepYear = indepYear;
+		this.independenceYear = indepYear;
 	}
 
 	public Double getLifeExpectancy() {
@@ -160,7 +164,7 @@ public class Country {
 	public String toString() {
 		return "Country [code=" + code + ", capital=" + capital + ", cities=" + cities + ", continent=" + continent
 				+ ", gnp=" + gnp + ", governmentForm=" + governmentForm + ", headOfState=" + headOfState
-				+ ", indepYear=" + indepYear + ", lifeExpectancy=" + lifeExpectancy + ", localName=" + localName
+				+ ", indepYear=" + independenceYear + ", lifeExpectancy=" + lifeExpectancy + ", localName=" + localName
 				+ ", name=" + name + ", population=" + population + ", region=" + region + ", surfaceArea="
 				+ surfaceArea + "]";
 	}

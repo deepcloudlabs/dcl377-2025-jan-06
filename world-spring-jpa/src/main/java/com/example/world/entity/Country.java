@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
+import javax.persistence.FetchType;
 import javax.persistence.FieldResult;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -125,7 +126,7 @@ public class Country {
 	@OneToOne
 	@JoinColumn(name = "capital")
 	private City capital;
-	@OneToMany(mappedBy = "country")
+	@OneToMany(mappedBy = "country",fetch = FetchType.LAZY)
 	private Set<City> cities;
 	@OneToMany(mappedBy = "country")
 	private Set<CountryLanguage> languages;
