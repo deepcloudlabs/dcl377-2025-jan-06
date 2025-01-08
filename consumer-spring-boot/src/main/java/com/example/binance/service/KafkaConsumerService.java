@@ -10,4 +10,5 @@ public class KafkaConsumerService {
 	public void handleMessage(String message) {
 		System.out.println("Kafka: %s".formatted(message));
 	}
+	
 }
