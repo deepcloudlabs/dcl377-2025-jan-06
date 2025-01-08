@@ -2,6 +2,7 @@ package com.example.hr.service;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.context.event.EventListener;
@@ -43,6 +44,7 @@ public class HrEventWebSocketService implements WebSocketHandler{
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
 		System.out.println("Connection is closed: %s".formatted(session.getId()));
+	    sessions.remove(session.getId());
 	}
 
 	@Override
@@ -51,19 +53,21 @@ public class HrEventWebSocketService implements WebSocketHandler{
 	}
 
 	@EventListener
-	public void listenHrEvent(HrEvent event) {
-		try {
-			var eventAsJson = objectMapper.writeValueAsString(event);
-			final var textMessage = new TextMessage(eventAsJson);
-			sessions.values().forEach(session ->{
-				try {
-					session.sendMessage(textMessage);
-				} catch (IOException e) {
-					System.out.println("Error while sending event through ws[%s]: %s".formatted(session.getId(),e.getMessage()));
-				}
-			});
-		} catch (JsonProcessingException e) {
-			System.out.println("Erro while serializing to json: %s".formatted(e.getMessage()));
-		}
+	public CompletableFuture<Void> listenHrEvent(HrEvent event) {
+		return CompletableFuture.runAsync(()->{
+			try {
+				var eventAsJson = objectMapper.writeValueAsString(event);
+				final var textMessage = new TextMessage(eventAsJson);
+				sessions.values().forEach(session ->{
+					try {
+						session.sendMessage(textMessage);
+					} catch (IOException e) {
+						System.out.println("Error while sending event through ws[%s]: %s".formatted(session.getId(),e.getMessage()));
+					}
+				});
+			} catch (JsonProcessingException e) {
+				System.out.println("Erro while serializing to json: %s".formatted(e.getMessage()));
+			}
+		});
 	}	
 }
