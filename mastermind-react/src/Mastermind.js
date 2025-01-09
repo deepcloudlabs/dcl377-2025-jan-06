@@ -26,7 +26,10 @@ class Mastermind extends PureComponent { // Stateful Component
             "numberOfMoves": 0,
             "maxNumberOfMoves": 10,
             "moves": [],
-            lives: 3
+            lives: 3,
+            counter: 60,
+            pbCounterWidth: '100%',
+            pbCounterClass: "progress-bar bg-success"
         }
     }
 
@@ -71,6 +74,34 @@ class Mastermind extends PureComponent { // Stateful Component
         console.log(`After setState() call: ${JSON.stringify(this.state)}`);
     };
 
+    componentDidMount() {
+        setInterval(() => {
+            let newGame = {...this.state};
+            newGame.counter--;
+            if (newGame.counter <= 0){
+                newGame.lives--;
+                if (newGame.lives === 0){
+                    //TODO: Player loses
+                } else {
+                    this.initializeGame(newGame);
+                    newGame.counter = 60;
+                }
+            }
+            newGame.pbCounterWidth = ((newGame.counter * 5 )/3) + "%";
+            if (newGame.counter < 30){
+                newGame.pbCounterClass = "progress-bar bg-danger";
+            } else if (newGame.counter < 40){
+                newGame.pbCounterClass = "progress-bar bg-warning";
+            } else if (newGame.counter < 50){
+                newGame.pbCounterClass = "progress-bar bg-info";
+            } else {
+                newGame.pbCounterClass = "progress-bar bg-success";
+            }
+            this.setState(newGame, this.saveStateToLocalStorage);
+        }, 1_000);
+    }
+
+    saveStateToLocalStorage = () => {}
     play = () => {
         let newGame = {...this.state};
         newGame.moves = [...this.state.moves];
@@ -109,6 +140,12 @@ class Mastermind extends PureComponent { // Stateful Component
                         </div>
                         <div className="mb-3">
                             Moves:<span className="badge bg-info">{this.state.numberOfMoves} of {this.state.maxNumberOfMoves}</span>
+                        </div>
+                        <div className="mb-3">
+                            <div className="progress">
+                                <div className={this.state.pbCounterClass}
+                                     style={{width: this.state.pbCounterWidth}}>{this.state.counter}</div>
+                            </div>
                         </div>
                         <div className="mb-3">
                             <label className="form-label" htmlFor="guess">Guess:</label>
