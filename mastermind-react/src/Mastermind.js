@@ -1,11 +1,20 @@
 // Components: i) stateless component -> js function
 //            ii) stateful component -> (A) class syntax
-//            since 16.3                (B) js function + Hooks
+//            since 16.3                (B) js function + useState() Hook
 
 // State -> Stateful Component
 //          Global -> Context API, Reducer API
 import {PureComponent} from "react";
 import Move from "./Move";
+import Card from "./components/common/Card";
+import CardHeader from "./components/common/CardHeader";
+import CardBody from "./components/common/CardBody";
+import Badge from "./components/common/Badge";
+import ProgressBar from "./components/common/ProgressBar";
+import Button from "./components/common/Button";
+import InputText from "./components/common/InputText";
+import Table from "./components/common/Table";
+import Container from "./components/common/Container";
 // level: 3 -> 4 -> ... -> 10 -> wins the game
 //  lives: 3
 // secret: 549 -> 3615
@@ -31,6 +40,30 @@ class Mastermind extends PureComponent { // Stateful Component
             pbCounterWidth: '100%',
             pbCounterClass: "progress-bar bg-success"
         }
+        /*
+        this.state = { // Model
+            game: {
+                "level": 3,
+                "secret": this.createSecret(3),
+                 "guess": 123,
+                 "numberOfMoves": 0,
+                 "moves": [],
+                 "lives": 3,
+                 "counter": 60
+            },
+            constraints: {
+                "maxNumberOfMoves": 10,
+                "maxCounter": 60
+            },
+            ui: {
+                pbCounterWidth: '100%',
+                pbCounterClass: "progress-bar bg-success"
+            },
+            statistics: {
+                "wins": 0,
+                "loses": 0
+            }
+        }*/
     }
 
     createDigit = (min, max) => {
@@ -75,24 +108,31 @@ class Mastermind extends PureComponent { // Stateful Component
     };
 
     componentDidMount() {
+        /*
+        let localState = localStorage.getItem("mastermind");
+        if (localState) {
+            localState = JSON.parse(localState);
+        }
+
+         */
         setInterval(() => {
             let newGame = {...this.state};
             newGame.counter--;
-            if (newGame.counter <= 0){
+            if (newGame.counter <= 0) {
                 newGame.lives--;
-                if (newGame.lives === 0){
+                if (newGame.lives === 0) {
                     //TODO: Player loses
                 } else {
                     this.initializeGame(newGame);
                     newGame.counter = 60;
                 }
             }
-            newGame.pbCounterWidth = ((newGame.counter * 5 )/3) + "%";
-            if (newGame.counter < 30){
+            newGame.pbCounterWidth = ((newGame.counter * 5) / 3) + "%";
+            if (newGame.counter < 30) {
                 newGame.pbCounterClass = "progress-bar bg-danger";
-            } else if (newGame.counter < 40){
+            } else if (newGame.counter < 40) {
                 newGame.pbCounterClass = "progress-bar bg-warning";
-            } else if (newGame.counter < 50){
+            } else if (newGame.counter < 50) {
                 newGame.pbCounterClass = "progress-bar bg-info";
             } else {
                 newGame.pbCounterClass = "progress-bar bg-success";
@@ -101,7 +141,9 @@ class Mastermind extends PureComponent { // Stateful Component
         }, 1_000);
     }
 
-    saveStateToLocalStorage = () => {}
+    saveStateToLocalStorage = () => {
+        localStorage.setItem("mastermind", JSON.stringify({...this.state}));
+    }
     play = () => {
         let newGame = {...this.state};
         newGame.moves = [...this.state.moves];
@@ -109,88 +151,53 @@ class Mastermind extends PureComponent { // Stateful Component
         if (newGame.secret === newGame.guess) {
             //TODO: player wins at this level
         } else {
-            let message = this.createMessage(newGame.secret,newGame.guess);
-            newGame.moves.push(new Move(newGame.guess,message));
+            let message = this.createMessage(newGame.secret, newGame.guess);
+            newGame.moves.push(new Move(newGame.guess, message));
             if (newGame.numberOfMoves >= newGame.maxNumberOfMoves) {
-                    newGame.lives--;
-                    if (newGame.lives <= 0){
-                        // TODO: player loses
-                    } else {
-                        this.initializeGame(newGame);
-                    }
+                newGame.lives--;
+                if (newGame.lives <= 0) {
+                    // TODO: player loses
+                } else {
+                    this.initializeGame(newGame);
+                }
             }
         }
-        this.setState(newGame, () => {});
+        this.setState(newGame, () => {
+        });
     }
 
     render() {
         return ( // Model -- bind --> View
-            <div className="Container">
-                <p></p>
-                <div className="card">
-                    <div className="card-header">
-                        <h4 className="card-title">Game Console</h4>
-                    </div>
-                    <div className="card-body">
+            <Container>
+                <Card>
+                    <CardHeader title="*Game Console*"/>
+                    <CardBody>
+                        <Badge label={"*Level*"} bgColor={"bg-warning"} value={this.state.level}/>
+                        <Badge label={"*Lives*"} bgColor={"bg-danger"} value={this.state.lives}/>
+                        <Badge label={"*Number Of Moves*"} bgColor={"bg-info"} value={this.state.numberOfMoves}/>
+                        <ProgressBar value={this.state.counter} pbClass={this.state.pbCounterClass}
+                                     pbWidth={this.state.pbCounterWidth}/>
                         <div className="mb-3">
-                            Level:<span className="badge bg-info">{this.state.level}</span>
+                            <InputText value={this.state.guess}
+                                       label={"Guess"}
+                                       name={"guess"}
+                                       placeHolder={"Enter your guess"}
+                                       changeHandler={this.alternativeHandleInputChange}/>
+                            <Button label={"Play"} buttonClass={"btn-success"} clickHandler={this.play}/>
                         </div>
-                        <div className="mb-3">
-                            Lives:<span className="badge bg-info">{this.state.lives}</span>
-                        </div>
-                        <div className="mb-3">
-                            Moves:<span className="badge bg-info">{this.state.numberOfMoves} of {this.state.maxNumberOfMoves}</span>
-                        </div>
-                        <div className="mb-3">
-                            <div className="progress">
-                                <div className={this.state.pbCounterClass}
-                                     style={{width: this.state.pbCounterWidth}}>{this.state.counter}</div>
-                            </div>
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label" htmlFor="guess">Guess:</label>
-                            <input type="number"
-                                   id="guess"
-                                   name="guess"
-                                   className="form-control"
-                                   placeholder="Enter your guess"
-                                   onChange={this.alternativeHandleInputChange}
-                                   value={this.state.guess} />
-                            <button className="btn btn-success"
-                            onClick={this.play}>Play</button>
-                        </div>
-                    </div>
-                </div>
-                <div className="card">
-                    <div className="card-header">
-                        <h4 className="card-title">Moves</h4>
-                    </div>
-                    <div className="card-body">
-                        <table className="table table-bordered table-hover table-responsive table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Guess</th>
-                                    <th>Message</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                this.state.moves.map((move, i) => (
-                                    <tr key={move.guess*i*17}>
-                                        <td>{move.guess}</td>
-                                        <td>{move.message}</td>
-                                    </tr>
-                                ))
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                    </CardBody>
+                </Card>
+                <Card>
+                    <CardHeader title={"Moves"}/>
+                    <CardBody>
+                        <Table columns={["Guess", "Message"]} rows={this.state.moves} fields={["guess", "message"]}/>
+                    </CardBody>
+                </Card>
+            </Container>
         );
     }
 
-    createMessage = (secret, guess)=> {
+    createMessage = (secret, guess) => {
         let secretAsString = secret.toString();
         let guessAsString = guess.toString();
         let perfectMatch = 0;
@@ -199,8 +206,8 @@ class Mastermind extends PureComponent { // Stateful Component
             let g = guessAsString.charAt(i);
             for (let j = 0; j < secretAsString.length; j++) {
                 let s = secretAsString.charAt(j);
-                if (s === g){
-                    if (i === j){
+                if (s === g) {
+                    if (i === j) {
                         perfectMatch++;
                     } else {
                         partialMatch++;
@@ -208,14 +215,14 @@ class Mastermind extends PureComponent { // Stateful Component
                 }
             }
         }
-        if (partialMatch === 0 && perfectMatch === 0){
+        if (partialMatch === 0 && perfectMatch === 0) {
             return "No Match";
         }
         let message = "";
-        if (partialMatch > 0){
+        if (partialMatch > 0) {
             message = `-${partialMatch}`;
         }
-        if (perfectMatch > 0){
+        if (perfectMatch > 0) {
             message = `${message}+${perfectMatch}`;
         }
         return message;
